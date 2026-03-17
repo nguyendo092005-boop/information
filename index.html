@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nguyễn Văn Đô</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <canvas id="bgCanvas" class="bg-canvas" aria-hidden="true"></canvas>
+    <main class="page">
+      <header class="hero">
+        <img
+          class="avatar"
+          src="https://scontent.fhan4-6.fna.fbcdn.net/v/t39.30808-6/554106271_1333317005018423_6758525396033981320_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=1d70fc&_nc_ohc=-Oxf0bI-mz8Q7kNvwFj9DcX&_nc_oc=Adk7NMEqdjHATZr2zosr8NJZvwBUhZB-Fi35grHAnbbBuxd0p4XRDiprDsJoOW_tMO0&_nc_zt=23&_nc_ht=scontent.fhan4-6.fna&_nc_gid=-nkCS3RynffJ9BHNbcFLNA&_nc_ss=8&oh=00_AfzXfYqm3Abih94jfetf-w90AXcS_PnaQxJ9hhAdwd129Q&oe=69BEEB5F"
+          alt="Avatar"
+        />
+        <h1 class="name">Nguyễn Văn Đô</h1>
+        <p class="tagline">
+          Xin chào mình là sinh viên đang học lập trình và designer PCB rất hân
+          hạn được làm quen với mọi người. Mình rất mong muốn được học hỏi và
+          phát triển kỹ năng của mình trong lĩnh vực này.
+        </p>
+      </header>
+
+      <section class="links">
+        <h2>Liên kết</h2>
+        <ul>
+          <li>
+            <a
+              href="https://github.com/donguyen25"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="icon" aria-hidden="true">
+                <img src="logo/GitHub.png" alt="GitHub" />
+              </span>
+              <span>GitHub</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://www.tiktok.com/@weo_weo.05"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="icon" aria-hidden="true">
+                <img src="logo/TikTok.jpg" alt="TikTok" />
+              </span>
+              <span>TikTok</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://www.facebook.com/donguyen19"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="icon" aria-hidden="true">
+                <img src="logo/FB.jpg" alt="Facebook" />
+              </span>
+              <span>Facebook</span>
+            </a>
+          </li>
+          <li>
+            <div class="email">
+              <span class="icon" aria-hidden="true">
+                <img src="logo/GM.png" alt="Email" />
+              </span>
+              <span class="email-text" id="emailAddress"
+                >goku19092005@gmail.com</span
+              >
+              <button class="copy-btn" type="button" aria-label="Copy email">
+                Copy
+              </button>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <footer class="footer">
+        <p></span> Nguyễn Văn Đô</p>
+      </footer>
+    </main>
+
+    <div class="toast" role="status" aria-live="polite" aria-atomic="true">
+      Email đã được sao chép!
+    </div>
+
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      const emailText = document.getElementById("emailAddress").textContent;
+      const toast = document.querySelector(".toast");
+      const button = document.querySelector(".copy-btn");
+
+      button.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(emailText);
+          toast.classList.add("visible");
+          setTimeout(() => toast.classList.remove("visible"), 1800);
+        } catch (err) {
+          console.warn("Copy failed", err);
+        }
+      });
+
+      const canvas = document.getElementById("bgCanvas");
+      const ctx = canvas.getContext("2d");
+      let stars = [];
+      let starCount = 160;
+      let size = { w: 0, h: 0 };
+
+      function resizeCanvas() {
+        size.w = window.innerWidth;
+        size.h = window.innerHeight;
+        canvas.width = size.w * devicePixelRatio;
+        canvas.height = size.h * devicePixelRatio;
+        canvas.style.width = `${size.w}px`;
+        canvas.style.height = `${size.h}px`;
+        ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+      }
+
+      function initStars() {
+        stars = Array.from({ length: starCount }, () => ({
+          x: Math.random() * size.w,
+          y: Math.random() * size.h,
+          r: Math.random() * 1.25 + 0.35,
+          alpha: Math.random() * 0.75 + 0.25,
+          speed: Math.random() * 0.03 + 0.015,
+          phase: Math.random() * Math.PI * 2,
+        }));
+      }
+
+      function drawStars(time) {
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        stars.forEach((s) => {
+          s.phase += s.speed;
+          const a = 0.4 + Math.sin(s.phase) * 0.45;
+          ctx.fillStyle = `rgba(255,255,255,${a})`;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.restore();
+      }
+
+      function drawNebula(time) {
+        const gradient = ctx.createRadialGradient(
+          size.w * 0.28 + Math.sin(time * 0.0003) * 240,
+          size.h * 0.18 + Math.cos(time * 0.0002) * 160,
+          60,
+          size.w * 0.28,
+          size.h * 0.18,
+          size.w * 0.65,
+        );
+        gradient.addColorStop(0, "rgba(88, 166, 255, 0.26)");
+        gradient.addColorStop(0.45, "rgba(88, 166, 255, 0.04)");
+        gradient.addColorStop(1, "rgba(88, 166, 255, 0)");
+
+        ctx.save();
+        ctx.globalCompositeOperation = "overlay";
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, size.w, size.h);
+        ctx.restore();
+      }
+
+      function drawGlow(time) {
+        const gradient = ctx.createRadialGradient(
+          size.w * 0.7 + Math.cos(time * 0.00035) * 180,
+          size.h * 0.82 + Math.sin(time * 0.00025) * 120,
+          40,
+          size.w * 0.7,
+          size.h * 0.82,
+          size.w * 0.7,
+        );
+        gradient.addColorStop(0, "rgba(255, 85, 128, 0.22)");
+        gradient.addColorStop(0.35, "rgba(255, 85, 128, 0.05)");
+        gradient.addColorStop(1, "rgba(255, 85, 128, 0)");
+
+        ctx.save();
+        ctx.globalCompositeOperation = "overlay";
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, size.w, size.h);
+        ctx.restore();
+      }
+
+      function render(time) {
+        ctx.clearRect(0, 0, size.w, size.h);
+        drawNebula(time);
+        drawGlow(time);
+        drawStars(time);
+        requestAnimationFrame(render);
+      }
+
+      function onResize() {
+        resizeCanvas();
+        initStars();
+      }
+
+      window.addEventListener("resize", onResize);
+      onResize();
+      requestAnimationFrame(render);
+    </script>
+  </body>
+</html>
